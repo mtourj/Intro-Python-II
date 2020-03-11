@@ -1,5 +1,6 @@
 # Implement a class to hold room information. This should have name and
 # description attributes.
+from colors import Colors
 
 
 class Room:
@@ -19,7 +20,8 @@ class Room:
         if(len(self.items) > 0):
             items = 'There are some things here:\n'
             for item in self.items:
-                items = items + f'  {item.name}\n'
+                items = items + f'  {item.name}\n\n'
+            items = items + f'{Colors.GRAY}Hint: take [item] to take an item'
 
         return \
             f'========================================\n\
@@ -27,7 +29,7 @@ class Room:
                                         \n\
 {self.description}                      \n\n\
 {items}                                 \n\
-========================================\n'
+{Colors.WHITE}========================================\n'
 
     def addItem(self, item):
         self.items.append(item)

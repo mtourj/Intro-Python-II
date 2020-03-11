@@ -65,11 +65,30 @@ os.system('clear')
 
 error = ''
 
+# When this is true, we are on the
+# 'inventory screen', so to speak
+viewInventory = False
+
 while True:
     if(len(error) > 0):
         print(Colors.RED + error + '\n')
         error = ''
-    print(Colors.WHITE + str(player.current_room))
+
+    view = str(player.current_room)
+
+    if(viewInventory):
+        inventory = ''
+        for item in player.inventory:
+            inventory = inventory + '  ' + item.name + ' - ' + item.description + '\n'
+        if(len(inventory) == 0):
+            inventory = f'{Colors.GRAY}  <You are empty handed>'
+
+        view = f'========================================\n\
+Inventory:\n{inventory}\n\n\
+{Colors.GRAY}Use `inventory` or `i` to exit inventory\n\
+{Colors.WHITE}========================================\n'
+
+    print(Colors.WHITE + view)
     user_input = input('(W, N, E, S) >>')
 
     os.system('clear')
@@ -121,6 +140,8 @@ while True:
                     targetItem = ''
             if(len(targetItem) > 0):
                 error = f'You do not have a(n) {targetItem}'
+    elif(command[0] == 'i' or command[0] == 'inventory'):
+        viewInventory = not viewInventory
     elif(command[0] == 'q'):
         exit()
     else:
