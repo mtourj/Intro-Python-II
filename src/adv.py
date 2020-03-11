@@ -104,12 +104,23 @@ while True:
                 if(item.name.lower() == targetItem):
                     player.current_room.removeItem(item)
                     player.addItemToInventory(item)
-                    # Set target item to nothing, we have our result
+                    # Set item to empty string to know if we've found it
                     targetItem = ''
             if(len(targetItem) > 0):
                 error = f'There is not a(n) {targetItem} here'
     elif(command[0] == 'drop'):
-        pass
+        if(len(command) < 2):
+            error = f'Invalid input.\nUsage: drop [item] - Drop an item from inventory'
+        else:
+            targetItem = command[1]
+            for item in player.inventory:
+                if(item.name.lower() == targetItem):
+                    player.removeItemFromInventory(item)
+                    player.current_room.addItem(item)
+                    # Set item to empty string to know if we've found it
+                    targetItem = ''
+            if(len(targetItem) > 0):
+                error = f'You do not have a(n) {targetItem}'
     elif(command[0] == 'q'):
         exit()
     else:

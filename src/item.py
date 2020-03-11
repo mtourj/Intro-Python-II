@@ -7,3 +7,6 @@ class Item:
 
     def on_take(self):
       print(f'{Colors.GREEN}You picked up: {self.name} - {self.description}\n')
+
+    def on_drop(self):
+      print(f'{Colors.YELLOW}You dropped {self.name}\n')
