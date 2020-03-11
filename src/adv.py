@@ -1,12 +1,14 @@
 from room import Room
 from player import Player
+from item import Item
+from colors import Colors
 import os
 
 # Declare all the rooms
 
 room = {
     'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
+                     "North of you, the cave mount beckons", [Item("Crate", 'I am box')]),
 
     'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
 passages run north and east."""),
@@ -59,37 +61,56 @@ print('Welcome to the Cave of Lost Treasures\n\
 
 input('Press ENTER to continue...')
 
+os.system('clear')
+
 error = ''
 
 while True:
-    os.system('clear')
     if(len(error) > 0):
-        print('\033[1;31;40m' + error + '\n')
+        print(Colors.RED + error + '\n')
         error = ''
-    print('\033[1;37;40m' + str(player.current_room))
+    print(Colors.WHITE + str(player.current_room))
     user_input = input('(W, N, E, S) >>')
 
-    if(user_input.lower() == 'n'):
+    os.system('clear')
+    command = user_input.lower().split(' ')
+
+    if(command[0] == 'n'):
         if(player.current_room.n_to == None):
             error = 'There is nothing in that direction.'
         else:
             player.moveToRoom(player.current_room.n_to)
-    elif(user_input.lower() == 's'):
+    elif(command[0] == 's'):
         if(player.current_room.s_to == None):
             error = 'There is nothing in that direction.'
         else:
             player.moveToRoom(player.current_room.s_to)
-    elif(user_input.lower() == 'w'):
+    elif(command[0] == 'w'):
         if(player.current_room.w_to == None):
             error = 'There is nothing in that direction.'
         else:
             player.moveToRoom(player.current_room.w_to)
-    elif(user_input.lower() == 'e'):
+    elif(command[0] == 'e'):
         if(player.current_room.e_to == None):
             error = 'There is nothing in that direction.'
         else:
             player.moveToRoom(player.current_room.e_to)
-    elif(user_input.lower() == 'q'):
+    elif(command[0] == 'take' or command[0] == 'get'):
+        if(len(command) < 2):
+            error = f'Invalid input.\nUsage: {command[0]} [item] - Pick up an item in the room'
+        else:
+            targetItem = command[1]
+            for item in player.current_room.items:
+                if(item.name.lower() == targetItem):
+                    player.current_room.removeItem(item)
+                    player.addItemToInventory(item)
+                    # Set target item to nothing, we have our result
+                    targetItem = ''
+            if(len(targetItem) > 0):
+                error = f'There is not a(n) {targetItem} here'
+    elif(command[0] == 'drop'):
+        pass
+    elif(command[0] == 'q'):
         exit()
     else:
         error = 'Invalid input.\nValid inputs: W (West), N (North), E (East), S (South)'
