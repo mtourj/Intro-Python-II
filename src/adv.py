@@ -1,4 +1,6 @@
 from room import Room
+from player import Player
+import os
 
 # Declare all the rooms
 
@@ -38,6 +40,7 @@ room['treasure'].s_to = room['narrow']
 #
 
 # Make a new player object that is currently in the 'outside' room.
+player = Player(room['outside'])
 
 # Write a loop that:
 #
@@ -49,3 +52,44 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+print('Welcome to the Cave of Lost Treasures\n\
+       To play, use W, N, E, S to navigate West, North, East or South\n\
+       Press q at any time to quit')
+
+input('Press ENTER to continue...')
+
+error = ''
+
+while True:
+    os.system('clear')
+    if(len(error) > 0):
+        print('\033[1;31;40m' + error + '\n')
+        error = ''
+    print('\033[1;37;40m' + str(player.current_room))
+    user_input = input('(W, N, E, S) >>')
+
+    if(user_input.lower() == 'n'):
+        if(player.current_room.n_to == None):
+            error = 'There is nothing in that direction.'
+        else:
+            player.moveToRoom(player.current_room.n_to)
+    elif(user_input.lower() == 's'):
+        if(player.current_room.s_to == None):
+            error = 'There is nothing in that direction.'
+        else:
+            player.moveToRoom(player.current_room.s_to)
+    elif(user_input.lower() == 'w'):
+        if(player.current_room.w_to == None):
+            error = 'There is nothing in that direction.'
+        else:
+            player.moveToRoom(player.current_room.w_to)
+    elif(user_input.lower() == 'e'):
+        if(player.current_room.e_to == None):
+            error = 'There is nothing in that direction.'
+        else:
+            player.moveToRoom(player.current_room.e_to)
+    elif(user_input.lower() == 'q'):
+        exit()
+    else:
+        error = 'Invalid input.\nValid inputs: W (West), N (North), E (East), S (South)'
