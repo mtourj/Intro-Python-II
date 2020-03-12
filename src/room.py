@@ -20,8 +20,8 @@ class Room:
         if(len(self.items) > 0):
             items = 'There are some things here:\n'
             for item in self.items:
-                items = items + f'  {item.name}\n\n'
-            items = items + f'{Colors.GRAY}Hint: take [item] to take an item'
+                items = items + f'  {item.name}\n'
+            items = items + f'\n{Colors.GRAY}Hint: take [item] to take an item'
 
         return \
             f'========================================\n\

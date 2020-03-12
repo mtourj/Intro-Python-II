@@ -69,6 +69,8 @@ error = ''
 # 'inventory screen', so to speak
 viewInventory = False
 
+move_directions = ('n', 's', 'e', 'w')
+
 while True:
     if(len(error) > 0):
         print(Colors.RED + error + '\n')
@@ -94,26 +96,10 @@ Inventory:\n{inventory}\n\n\
     os.system('clear')
     command = user_input.lower().split(' ')
 
-    if(command[0] == 'n'):
-        if(player.current_room.n_to == None):
+    if(command[0] in move_directions):
+        moved = player.travel(command[0])
+        if not moved:
             error = 'There is nothing in that direction.'
-        else:
-            player.moveToRoom(player.current_room.n_to)
-    elif(command[0] == 's'):
-        if(player.current_room.s_to == None):
-            error = 'There is nothing in that direction.'
-        else:
-            player.moveToRoom(player.current_room.s_to)
-    elif(command[0] == 'w'):
-        if(player.current_room.w_to == None):
-            error = 'There is nothing in that direction.'
-        else:
-            player.moveToRoom(player.current_room.w_to)
-    elif(command[0] == 'e'):
-        if(player.current_room.e_to == None):
-            error = 'There is nothing in that direction.'
-        else:
-            player.moveToRoom(player.current_room.e_to)
     elif(command[0] == 'take' or command[0] == 'get'):
         if(len(command) < 2):
             error = f'Invalid input.\nUsage: {command[0]} [item] - Pick up an item in the room'
