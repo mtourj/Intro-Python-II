@@ -1,5 +1,5 @@
 from colors import Colors
-
+from views import SceneManager
 
 class Item:
     def __init__(self, name, description):
@@ -7,8 +7,8 @@ class Item:
         self.description = description
 
     def on_take(self):
-        print(f'{Colors.GREEN}You picked up: {self.name} - {self.description}\n\
-Use `inventory` to see inventory\n')
+        SceneManager.alert(f'You picked up: {self.name} - {self.description}\n\
+Use `inventory` to see inventory', Colors.GREEN)
 
     def on_drop(self):
-        print(f'{Colors.YELLOW}You dropped {self.name}\n')
+        SceneManager.alert(f'You dropped {self.name}', Colors.YELLOW)
