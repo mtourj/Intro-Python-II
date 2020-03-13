@@ -1,51 +1,84 @@
 from room import Room
-
-# Declare all the rooms
-
-room = {
-    'outside':  Room("Outside Cave Entrance",
-                     "North of you, the cave mount beckons"),
-
-    'foyer':    Room("Foyer", """Dim light filters in from the south. Dusty
-passages run north and east."""),
-
-    'overlook': Room("Grand Overlook", """A steep cliff appears before you, falling
-into the darkness. Ahead to the north, a light flickers in
-the distance, but there is no way across the chasm."""),
-
-    'narrow':   Room("Narrow Passage", """The narrow passage bends here from west
-to north. The smell of gold permeates the air."""),
-
-    'treasure': Room("Treasure Chamber", """You've found the long-lost treasure
-chamber! Sadly, it has already been completely emptied by
-earlier adventurers. The only exit is to the south."""),
-}
-
-
-# Link rooms together
-
-room['outside'].n_to = room['foyer']
-room['foyer'].s_to = room['outside']
-room['foyer'].n_to = room['overlook']
-room['foyer'].e_to = room['narrow']
-room['overlook'].s_to = room['foyer']
-room['narrow'].w_to = room['foyer']
-room['narrow'].n_to = room['treasure']
-room['treasure'].s_to = room['narrow']
+from player import Player
+from item import Item
+from views import SceneManager
+import rooms
 
 #
 # Main
 #
 
 # Make a new player object that is currently in the 'outside' room.
+player = Player(rooms.OUTSIDE)
 
-# Write a loop that:
-#
-# * Prints the current room name
-# * Prints the current description (the textwrap module might be useful here).
-# * Waits for user input and decides what to do.
-#
-# If the user enters a cardinal direction, attempt to move to the room there.
-# Print an error message if the movement isn't allowed.
-#
-# If the user enters "q", quit the game.
+print('Welcome to the Cave of Lost Treasures\n\
+       To play, use W, N, E, S to navigate West, North, East or South\n\
+       Press q at any time to quit')
+
+input('Press ENTER to continue...')
+
+# Error to display
+error = ''
+
+# When this is true, we are on the
+# 'inventory screen', so to speak
+viewInventory = False
+
+# Valid movement inputs
+move_directions = ('n', 's', 'e', 'w')
+
+while True:
+    # Show error if any
+    if(len(error) > 0):
+        SceneManager.alert(error)
+        error = ''
+    
+    # Conditional render - Inventory or Room
+    if(viewInventory):
+        SceneManager.renderInventory(player.inventory)
+    else:
+        SceneManager.renderRoom(player.current_room)
+
+
+    # Get user input...
+    user_input = input('(W, N, E, S) >>')
+
+    # Command formatted to lower case, split by space
+    command = user_input.lower().split(' ')
+
+    # If it is in move_directions, it is a move command
+    if(command[0] in move_directions):
+        moved = player.travel(command[0])
+        if not moved:
+            error = 'There is nothing in that direction.'
+    # Pick up an item
+    elif(command[0] == 'take' or command[0] == 'get'):
+        if(len(command) < 2):
+            error = f'Invalid input.\nUsage: {command[0]} [item] - Pick up an item in the room'
+        else:
+            # Does this item exist in the room?
+            if(player.current_room.hasItem(command[1])):
+                item = player.current_room.removeItem(command[1])
+                player.addItemToInventory(item)
+            else:
+                error = f'There is not a(n) {command[1]} here'
+    # Drop an item
+    elif(command[0] == 'drop'):
+        if(len(command) < 2):
+            error = f'Invalid input.\nUsage: drop [item] - Drop an item from inventory'
+        else:
+            # Does the player have this item?
+            if(player.hasItem(command[1])):
+                item = player.removeItemFromInventory(command[1])
+                player.current_room.addItem(item)
+            else:
+                error = f'You do not have a(n) {command[1]}'
+    # Toggle inventory view
+    elif(command[0] == 'i' or command[0] == 'inventory'):
+        viewInventory = not viewInventory
+    # Exit application
+    elif(command[0] == 'q'):
+        exit(0)
+    # Invalid input, display an error
+    else:
+        error = 'Invalid input.\nValid inputs: W (West), N (North), E (East), S (South)'
